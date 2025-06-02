@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Album Gambar Modern</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: radial-gradient(circle at center, #141627 0%, #0e0f1a 100%);
+      color: #fff;
+      overflow-x: hidden;
+      user-select: none;
+    }
+    .header {
+      text-align: center;
+      padding: 50px 20px 20px;
+      font-size: 48px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      background: linear-gradient(45deg, #00ffc3, #00a3ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+    }
+    .password-screen {
+      position: fixed;
+      inset: 0;
+      background: url('https://i.pinimg.com/736x/41/f6/b5/41f6b54c6ab453ce0ac50e180b0b1015.jpg') no-repeat center center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    .password-box {
+      background: rgba(28, 29, 43, 0.9);
+      padding: 50px;
+      border-radius: 25px;
+      box-shadow: 0 0 60px rgba(0,255,204,0.5);
+      text-align: center;
+    }
+    .password-box h2 { margin-bottom: 20px; font-weight: 600; }
+    .password-box input[type="password"] {
+      padding: 15px;
+      width: 240px;
+      border: none;
+      border-radius: 10px;
+      background: #2e2f45;
+      color: #fff;
+      margin-bottom: 20px;
+      outline: none;
+    }
+    .password-box button {
+      padding: 12px 24px;
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .password-box button:hover { background: #00e6b8; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      padding: 40px 60px 80px;
+      max-width: 1300px;
+      margin: auto;
+    }
+    .gallery-item {
+      text-align: center;
+    }
+    .gallery-item img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,255,204,0.2);
+      cursor: pointer;
+      transition: transform 0.4s ease, box-shadow 0.4s;
+    }
+    .gallery-item img:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 40px rgba(0,255,204,0.4);
+    }
+    .filename {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 14px;
+      color: #aaa;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 60px;
+    }
+
+    /* Modal Gambar */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-img {
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(0,255,204,0.5);
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <!-- Password -->
+  <div class="password-screen" id="passwordScreen">
+    <div class="password-box">
+      <h2>Masukkan Sandi</h2>
+      <input type="password" id="passwordInput" placeholder="Sandi..." autofocus />
+      <br />
+      <button onclick="checkPassword()">Masuk</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <img id="modalImg" class="modal-img" src="" alt="Perbesar Gambar" />
+  </div>
+
+  <!-- Konten Utama -->
+  <div id="mainContent" style="display:none">
+    <div class="header">Album Gambar</div>
+    <div class="gallery" id="gallery"></div>
+    <div class="footer">&copy; 2025 Album Gambar Modern. All rights reserved.</div>
+  </div>
+
+  <script>
+    const password = "userbilingual123";
+    const gallery = document.getElementById('gallery');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalImg = document.getElementById('modalImg');
+
+    const imageUrls = [
+      "photo1.jpg",
+      "photo2.jpg",
+      "photo3.jpg",
+      "photo4.jpg",
+      "photo5.jpg",
+      "photo6.jpg",
+      "photo7.jpg",
+      "photo8.jpg",
+      "photo9.jpg",
+      "photo10.jpg",
+      "photo11.jpg",
+      "photo12.jpg",
+      "photo13.jpg",
+      "photo14.jpg",
+      "photo15.jpg",
+      "photo16.jpg"
+    ];
+
+    imageUrls.forEach((url, index) => {
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = `gambar-${index + 1}.jpg`;
+      img.onclick = () => openModal(url);
+
+      const filename = document.createElement('div');
+      filename.className = 'filename';
+      filename.textContent = `gambar-${index + 1}.jpg`;
+
+      div.appendChild(img);
+      gallery.appendChild(div);
+    });
+
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === password) {
+        document.getElementById('passwordScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+      } else {
+        alert("Sandi salah!");
+      }
+    }
+
+    function openModal(url) {
+      modalImg.src = url;
+      modalOverlay.classList.add('active');
+    }
+
+    modalOverlay.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+      modalImg.src = '';
+    });
+
+    // Proteksi tambahan
+    window.addEventListener('keydown', function(e) {
+      if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
+        (e.ctrlKey && e.key.toLowerCase() === 's') ||
+        (e.ctrlKey && e.key.toLowerCase() === 'u') ||
+        e.key === 'PrintScreen'
+      ) {
+        e.preventDefault();
+        if (e.key === 'PrintScreen') {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText('');
+            alert('Screenshot dilarang!');
+          }
+        }
+        return false;
+      }
+    });
+  </script>
+</body>
+</html>
